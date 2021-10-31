@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -20,6 +21,38 @@ async function run() {
     await client.connect();
     const database = client.db("Travel_Agent");
     const servicesCollection = database.collection("Services");
+    const ordersCollection = database.collection("Orders");
+
+    // POST ORDERS API
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      console.log("order hitted", order);
+      const result = await ordersCollection.insertOne(order);
+      res.json(result);
+    });
+    // GET ORDERS API
+    app.get("/orders", async (req, res) => {
+      const cursor = ordersCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // GET SINGLE API
+    app.get("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await servicesCollection.findOne(query);
+      res.json(result);
+    });
+
+    // POST API
+    app.post("/services", async (req, res) => {
+      const service = req.body;
+      console.log("post hitted", service);
+      const result = await servicesCollection.insertOne(service);
+
+      res.json(result);
+    });
 
     // GET API
     app.get("/services", async (req, res) => {
