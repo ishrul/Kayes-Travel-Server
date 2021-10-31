@@ -37,7 +37,15 @@ async function run() {
       res.send(result);
     });
 
-    // GET SINGLE API
+    // GET SINGLE ORDER API
+    app.get("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.findOne(query);
+      res.json(result);
+    });
+
+    // GET SINGLE SERVICE API
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -59,6 +67,15 @@ async function run() {
       const cursor = servicesCollection.find({});
       const result = await cursor.toArray();
       res.send(result);
+    });
+
+    // DELETE API
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
+      console.log(result);
+      res.json(result);
     });
   } finally {
     // await client.close();
