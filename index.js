@@ -53,6 +53,25 @@ async function run() {
       res.json(result);
     });
 
+    // UPDATING ORDER
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedOrder = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          status: updatedOrder.status,
+        },
+      };
+      const result = await ordersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+
     // POST API
     app.post("/services", async (req, res) => {
       const service = req.body;
